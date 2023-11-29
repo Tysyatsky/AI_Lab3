@@ -5,11 +5,11 @@ namespace lab3_ai_c
 {
     class Program
     {
-        private static readonly int size_v = 100;
-        private static readonly int size_m = 10;
+        private static readonly int sizeVector = 100;
+        private static readonly int sizeMatrix = 10;
         static void Main()
         {
-            HopfieldNetwork hopfield = new(size_v);
+            HopfieldNetwork hopfield = new(sizeVector);
 
             int[] patA = CastArrayUtils.CastArrayTo1D(PatternLibrary.A);
             int[] patP = CastArrayUtils.CastArrayTo1D(PatternLibrary.P);
@@ -19,9 +19,42 @@ namespace lab3_ai_c
             hopfield.Train(patP);
             hopfield.Train(patO);
 
-            Test(hopfield, PatternLibrary.A, PatternLibrary.A1);
-            Test(hopfield, PatternLibrary.P, PatternLibrary.P1);
-            Test(hopfield, PatternLibrary.O, PatternLibrary.O1);
+            try
+            {
+                Menu(hopfield);
+            }
+            catch (NotSupportedException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void Menu(HopfieldNetwork hopfield)
+        {
+            Console.WriteLine("Letter to test: A, P, O: ");
+            var key = Console.ReadKey();
+            int[,] letter;
+            int[,] jaggedLetter;
+
+            switch (key.Key)
+            {
+                case ConsoleKey.A:
+                    letter = PatternLibrary.A;
+                    jaggedLetter = PatternLibrary.A1;
+                    break;
+                case ConsoleKey.O:
+                    letter = PatternLibrary.O;
+                    jaggedLetter = PatternLibrary.O1;
+                    break;
+                case ConsoleKey.P:
+                    letter = PatternLibrary.P;
+                    jaggedLetter = PatternLibrary.P1;
+                    break;
+                default:
+                    throw new NotSupportedException("The letter is not supported!");
+            }
+
+            Test(hopfield, letter, jaggedLetter);
         }
 
         private static void Test(HopfieldNetwork hopfield, int[,] expectedPattern, int[,] testPattern)
@@ -31,11 +64,11 @@ namespace lab3_ai_c
             int[,] result = CastArrayUtils.CastArrayTo2D(recalledPattern);
 
             Console.WriteLine("--- Jagged pattern ---");
-            PatternPrinter.Print(testPattern, size_m);
+            PatternPrinter.Print(testPattern, sizeMatrix);
             Console.WriteLine("--- Expected pattern ---");
-            PatternPrinter.Print(expectedPattern, size_m);
+            PatternPrinter.Print(expectedPattern, sizeMatrix);
             Console.WriteLine("--- Result pattern ---");
-            PatternPrinter.Print(result, size_m);
+            PatternPrinter.Print(result, sizeMatrix);
         }
     }
 }
